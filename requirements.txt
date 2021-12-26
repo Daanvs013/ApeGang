@@ -1,0 +1,6 @@
+Flask==1.1.2
+gunicorn==19.10.0
+Werkzeug==1.0.1
+yahoo_fin== ^0.0.0
+flask_socketio== ^0.0.0
+pandas== ^0.0.0
