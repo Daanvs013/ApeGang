@@ -9,7 +9,6 @@ $( document ).ready(function() {
     socket.emit('ticker_price','True')
 });
 
-
 //ticker_price
 socket.on('ticker_price_response', function(data){
     //console.log(data)
@@ -38,14 +37,28 @@ socket.on('table_data_response', function(data){
                 row = 4
             } else if(person.name == 'Wenting'){
                 row = 5
+            } else if(person.name == 'Apegang'){
+                row = 6
             } 
             value = round(price*person.shares,2)
             cost = round(person.shares*person.gak,2);
             table.rows[row].cells[1].innerHTML = value;
             profit = round(value - cost,2);
             rendement = round(100*profit/cost,2)
-            table.rows[row].cells[4].innerHTML = profit;
-            table.rows[row].cells[5].innerHTML = rendement
+            if (profit>0){
+                table.rows[row].cells[4].innerHTML = profit;
+                table.rows[row].cells[4].style.color = '#04AA6D';
+            } else {
+                table.rows[row].cells[4].innerHTML = profit;
+                table.rows[row].cells[4].style.color = 'red';
+            }
+            if (rendement>0){
+                table.rows[row].cells[5].innerHTML = rendement;
+                table.rows[row].cells[5].style.color = '#04AA6D';
+            } else {
+                table.rows[row].cells[5].innerHTML = rendement;
+                table.rows[row].cells[5].style.color = 'red';
+            }
             table.rows[row].cells[6].innerHTML = person.shares;
             table.rows[row].cells[7].innerHTML = person.gak;
             table.rows[row].cells[8].innerHTML = cost;
