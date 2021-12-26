@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>ApeGang | Home</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/index.css' )}}"/>
+    </head>
+
+    <body>
+        <div id="header">
+            <a class="linker" href="/home">Home</a>
+            <a class="linker" href="/bram">Bram</a>
+            <a class="linker" href="/daan">Daan</a>
+            <a class="linker" href="/ernst">Ernst</a>
+            <a class="linker" href="/harm">Harm</a>
+            <a class="linker" href="/wenting">Wen Ting</a>
+        </div>
+        <div id="ticker">GME: $<span id="ticker_price">prijs ophalen...</span></div>
+        <table id="table">
+            <tr>
+                <th>Naam</th>
+                <th>Waarde</th>
+                <th>Verandering</th>
+                <th>%Verandering</th>
+                <th>Winst</th>
+                <th>Rendement</th>
+                <th>Aantal</th>
+                <th>GAK</th>
+                <th>Kosten</th>
+              </tr>
+              <tr>
+                <td>Bram</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Daan</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Ernst</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Harm</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Wen Ting</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+        </table>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdn.socket.io/4.4.0/socket.io.min.js" integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='javascript/socket.js')}}"></script>
+        <script src="{{ url_for('static', filename='javascript/javascript.js')}}"></script>
+    </body>
+</html>
