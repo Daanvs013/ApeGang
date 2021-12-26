@@ -1,0 +1,41 @@
+#header {
+    position: absolute;
+    width: 50%;
+    height: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.linker {
+    position: relative;
+    padding: 10px;
+    background-color: grey;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+a:link { text-decoration: none; }
+a:visited { text-decoration: none; }
+
+#ticker {
+    position: absolute;
+    top: 10%;
+}
+
+#table {
+    position: absolute;
+    top: 15%;
+    border-collapse: collapse;
+}
+
+td, th {
+    border: none;
+    text-align: left;
+    padding: 15px;
+  }
+
+th {
+    border-bottom: 1px solid black;
+}
