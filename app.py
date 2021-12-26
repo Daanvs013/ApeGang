@@ -11,12 +11,9 @@ import os
 from flask import Flask, render_template, url_for, request
 from flask_apscheduler import APScheduler
 from flask_socketio import SocketIO, emit,send
-## email packages
-import smtplib
-from email.message import EmailMessage
 ## import own packages
 from classes import group,company,investor
-from functions import getClosingPrice,getLivePrice, init
+from functions import getClosingPrice,getLivePrice, init, updateStats, sendEmail
 
 clients = []
 
@@ -35,7 +32,7 @@ log.disabled = True
 scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SECRET_KEY'] = 'key'
 socketio = SocketIO(app,async_mode='threading')
 
 ## routes
@@ -93,16 +90,25 @@ def event4(data):
             "shares": investor.totalShares()
         }
         output.append(package)
+    package = {
+        "name": apegang.name,
+        "gak": apegang.gak(),
+        "shares": apegang.totalShares()
+    }
+    output.append(package)
     socketio.emit('table_data_response', output)
 
 
 ##schedulers
-""" @scheduler.task('interval', id='1', seconds=10)
-def ticker():
-    gme = round(getLivePrice(),2)
-    socketio.emit('ticker_price',gme) """
+@scheduler.task('cron', id='1',week='*', day_of_week='*', hour ='22',minute='30' )
+def task1():
+    updateStats(investor_list)
+
+@scheduler.task('cron', id='2',week='*', day_of_week='*', hour ='22',minute='45' )
+def task2():
+    sendEmail(investor_list,gamestop)
 
 ## run flask app
 if __name__ == '__main__':
     print('Server Starting...')
-    socketio.run(app,port=5000, debug=False)
+    socketio.run(app, debug=False)
