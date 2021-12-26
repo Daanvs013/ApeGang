@@ -1,0 +1,7 @@
+https://theautomatic.net/yahoo_fin-documentation/
+
+https://schedule.readthedocs.io/en/stable/index.html
+
+https://viniciuschiele.github.io/flask-apscheduler/index.html
+
+
