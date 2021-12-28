@@ -25,7 +25,7 @@ log.disabled = True
 scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
-app.config['SECRET_KEY'] = os.environ["SECRET_KEY"]
+app.config['SECRET_KEY'] = 'key'
 socketio = SocketIO(app,async_mode='threading')
 ## init database
 ##createDatabases(app)
