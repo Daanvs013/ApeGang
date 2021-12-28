@@ -22,6 +22,12 @@ def getClosingPrice():
     price = si.get_live_price("GME")
     return price
 
+def getPreviousPrice():
+    data = pd.read_csv("CSV/Price.csv")
+    df = pd.DataFrame(data)
+    previousprice = df.loc[0][1]
+    return float(previousprice)
+
 def init(investor, investor_list):
     ## read data file
     with open('CSV/data.csv', 'r') as f:
@@ -47,7 +53,7 @@ def init(investor, investor_list):
         else:
             pass
 
-def updateStats(investor_list):
+def updateStats(investor_list,apegang):
     for investor in investor_list:
         name = str(investor.name)+".csv"
         ## open dataframe
@@ -55,12 +61,12 @@ def updateStats(investor_list):
         df = pd.DataFrame(data)
         ## columns
         currentdate = date.today().strftime("%d/%m/%Y")
-        value = investor.totalValue('live')
+        value = investor.totalValue('close')
         previous_value = df.loc[0][1]
-        change = round(value - previous_value)
+        change = round(value - previous_value,2)
         relchange = round(100*change/previous_value,2)
-        profit = investor.totalProfit('live')
-        rendement = investor.totalRendement('live')
+        profit = investor.totalProfit('close')
+        rendement = investor.totalRendement('close')
         shares = investor.totalShares()
         gak = investor.gak()
         cost = investor.totalCost()
@@ -70,8 +76,50 @@ def updateStats(investor_list):
         df.index = df.index + 1
         df = df.sort_index()
         ## save new dataframe to file
-        print(df)
+        ##print(df)
         df.to_csv("CSV/"+name, index=False)
+
+    ## update Totaal
+    ## open dataframe
+    data = pd.read_csv("CSV/Totaal.csv")
+    df = pd.DataFrame(data)
+    ## columns
+    currentdate = date.today().strftime("%d/%m/%Y")
+    value = apegang.totalValue('close')
+    previous_value = df.loc[0][1]
+    change = round(value - previous_value,2)
+    relchange = round(100*change/previous_value,2)
+    profit = apegang.totalProfit('close')
+    rendement = apegang.totalRendement('close')
+    shares = apegang.totalShares()
+    gak = apegang.gak()
+    cost = apegang.totalCost()
+    ## add row to dataframe
+    row = pd.Series([currentdate,round(value,2),change,relchange,profit,rendement,shares,gak,cost], index=df.columns)
+    df.loc[-1] = row
+    df.index = df.index + 1
+    df = df.sort_index()
+    ## save new dataframe to file
+    ##print(df)
+    df.to_csv("CSV/Totaal.csv", index=False)
+
+    ## update Price.csv
+    ## open dataframe
+    data = pd.read_csv("CSV/Price.csv")
+    df = pd.DataFrame(data)
+    ## columns
+    currentdate = date.today().strftime("%d/%m/%Y")
+    price = getClosingPrice()
+    previous = df.loc[0][1]
+    change = round(price - previous,2)
+    relchange = round(100*(change/previous),2)
+    volume = 'volume'
+    row = pd.Series([currentdate,price,change,relchange,volume], index=df.columns)
+    df.loc[-1] = row
+    df.index = df.index + 1
+    df = df.sort_index()
+    ## save new dataframe to file
+    df.to_csv("CSV/Price.csv", index=False)
  
 def sendEmail(investor_list,gamestop):
     ## get login details

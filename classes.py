@@ -1,5 +1,6 @@
 from functions import getClosingPrice, getLivePrice
 from yahoo_fin import stock_info as si
+import pandas as pd
 
 class investor():
     def __init__(self,name,email):
@@ -42,6 +43,12 @@ class investor():
         for holding in self.holdings:
             shares += holding.shares
         return shares
+
+    def previousvalue(self):
+        data = pd.read_csv("CSV/"+self.name+".csv")
+        df = pd.DataFrame(data)
+        previousvalue = df.loc[0][1]
+        return previousvalue
 
     def gak(self):
         ## gak is the 'Gemiddelde Aankoop kosten'
@@ -156,6 +163,12 @@ class group():
         for member in self.members:
             cost += member.totalCost()
         return cost
+
+    def previousvalue(self):
+        data = pd.read_csv("CSV/Totaal.csv")
+        df = pd.DataFrame(data)
+        previousvalue = df.loc[0][1]
+        return previousvalue
     
     def totalProfit(self,status='live'):
         profit = 0
@@ -190,4 +203,3 @@ class company():
         outstanding_float = si.get_stats("GME").loc[10][1]
         marketcap = round(float(outstanding_float[:-1]) * float(getLivePrice())/1000,2)
         return marketcap
-

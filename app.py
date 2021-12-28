@@ -6,24 +6,17 @@ from datetime import date
 from requests.api import get
 from yahoo_fin import stock_info as si
 import logging
-import os
+from os import path
+import sqlite3
 ## flask packages
 from flask import Flask, render_template, url_for, request
 from flask_apscheduler import APScheduler
 from flask_socketio import SocketIO, emit,send
+from flask_sqlalchemy import SQLAlchemy
 ## import own packages
 from classes import group,company,investor
-from functions import getClosingPrice,getLivePrice, init, updateStats, sendEmail
-
-clients = []
-
-## create investor classes from csv files
-investor_list = []
-init(investor,investor_list)
-## create group class with all investors as members
-apegang = group(investor_list)
-## create company class
-gamestop = company()
+from functions import getClosingPrice,getLivePrice, init, updateStats, sendEmail, getPreviousPrice
+#from databases import createDatabases
 
 ##init flaskapp and scheduler
 app = Flask(__name__)
@@ -34,9 +27,23 @@ scheduler.init_app(app)
 scheduler.start()
 app.config['SECRET_KEY'] = 'key'
 socketio = SocketIO(app,async_mode='threading')
+## init database
+##createDatabases(app)
+##
+
+
+clients = []
+## create investor classes from csv files
+investor_list = []
+init(investor,investor_list)
+## create group class with all investors as members
+apegang = group(investor_list)
+## create company class
+gamestop = company()
 
 ## routes
 @app.route('/home/')
+@app.route('/index/')
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -78,7 +85,8 @@ def disconnect():
 @socketio.on('ticker_price')
 def event1(data):
     gme = round(getLivePrice(),2)
-    socketio.emit('ticker_price_response',gme)
+    previous = getPreviousPrice()
+    socketio.emit('ticker_price_response',{"price":gme,"previousprice":previous})
 
 @socketio.on('table_data')
 def event4(data):
@@ -87,26 +95,28 @@ def event4(data):
         package = {
             "name": investor.name,
             "gak": investor.gak(),
-            "shares": investor.totalShares()
+            "shares": investor.totalShares(),
+            "previousvalue":investor.previousvalue()
         }
         output.append(package)
     package = {
         "name": apegang.name,
         "gak": apegang.gak(),
-        "shares": apegang.totalShares()
+        "shares": apegang.totalShares(),
+        "previousvalue":apegang.previousvalue()
     }
     output.append(package)
     socketio.emit('table_data_response', output)
 
 
 ##schedulers
-@scheduler.task('cron', id='1',week='*', day_of_week='*', hour ='22',minute='30' )
+@scheduler.task('cron', id='1',week='*', day_of_week='*', hour ='22',minute='15' )
 def task1():
-    updateStats(investor_list)
+    updateStats(investor_list,apegang)
 
-@scheduler.task('cron', id='2',week='*', day_of_week='*', hour ='22',minute='45' )
+""" @scheduler.task('cron', id='2',week='*', day_of_week='*', hour ='22',minute='10' )
 def task2():
-    sendEmail(investor_list,gamestop)
+    sendEmail(investor_list,gamestop) """
 
 ## run flask app
 if __name__ == '__main__':
