@@ -7,7 +7,7 @@ from requests.api import get
 from yahoo_fin import stock_info as si
 import logging
 from os import path
-import sqlite3
+##import sqlite3
 ## flask packages
 from flask import Flask, render_template, url_for, request
 from flask_apscheduler import APScheduler
