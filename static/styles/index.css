@@ -7,6 +7,15 @@
     text-align: center;
 }
 
+#sid {
+    position: absolute;
+    font-size: 0.6em;
+    color: black;
+    font-family: sans-serif;
+    bottom: 1%;
+    left: 1%;
+}
+
 .linker {
     position: relative;
     font-size: 1.1em;
@@ -16,18 +25,19 @@
     text-align: center;
     font-weight: bold;
     border-radius: 0 0 5px 5px;
+    border: 1px solid #009879;
 }
 
 .linker:hover {
     background-color: #ffffff;
-    color: #009879
+    color: #009879;
 }
 
 a:link { text-decoration: none; }
 
 a:visited { text-decoration: none; }
 
-#ticker {
+#ticker_container {
     position: absolute;
     top: 20%;
     font-family: sans-serif;
@@ -36,10 +46,15 @@ a:visited { text-decoration: none; }
     font-weight: bold;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #009879;
+    background-color: black;
     padding: 15px;
     color: #ffffff;
     border-radius: 5px;
+}
+
+#ticker_change {
+    font-size: 0.9em;
+    font-weight: normal;
 }
 
 #table {
@@ -53,8 +68,6 @@ a:visited { text-decoration: none; }
     border-collapse: collapse;
     font-family: sans-serif;
     margin: 25px 0;
-    border-radius: 5px 5px 0 0;
-    overflow: hidden;
 }
 
 td, th {
