@@ -1,32 +1,31 @@
-//round function
-function round(number, d) {
-  return Number(Math.round(number+'e'+d)+'e-'+d);
-}
-//
-
 // when document is loaded, ask for data
 $( document ).ready(function() {
     socket.emit('ticker_price','True')
+    socket.emit('table_data','all')
 });
 
 //ticker_price
 socket.on('ticker_price_response', function(data){
     //console.log(data)
-    var id = document.getElementById("ticker_price");
-    id.innerHTML = data
-});
-//
+    var table = document.getElementById('table');
+    price = data.price
+    document.getElementById("ticker_price").innerHTML = price;
+    change = price - data.previousprice
+    relchange = 100*(change)/data.previousprice
+    if(change<0){
+        document.getElementById("ticker_change").style.color = 'red';
+        document.getElementById("ticker_change").innerHTML = `${round(change,2)} ( ${round(relchange,2)}% )`;
+    } else {
+        document.getElementById("ticker_change").style.color = '#009879';
+        document.getElementById("ticker_change").innerHTML = `+${round(change,2)} ( ${round(relchange,2)}% )`;
+    }
 
-//table_data
-socket.on('table_data_response', function(data){
-    //console.log(data)
-    var table = document.getElementById("table");
-    var price = document.getElementById("ticker_price").innerHTML;
-    if (price=='prijs ophalen...'){
+    if(table_list == []){
         
     } else {
-        data.forEach( (person) => {
+        table_list.forEach((person) => {
             row = 0
+            //console.log(person)
             if(person.name == 'Bram'){
                 row = 1
             } else if(person.name == 'Daan'){
@@ -40,36 +39,65 @@ socket.on('table_data_response', function(data){
             } else if(person.name == 'Apegang'){
                 row = 6
             } 
-            value = round(price*person.shares,2)
-            cost = round(person.shares*person.gak,2);
-            table.rows[row].cells[1].innerHTML = value;
-            profit = round(value - cost,2);
-            rendement = round(100*profit/cost,2)
-            if (profit>0){
-                table.rows[row].cells[4].innerHTML = profit;
-                table.rows[row].cells[4].style.color = '#04AA6D';
+            //current value
+            value = person.shares*price;
+            table.rows[row].cells[1].innerHTML = round(value,2)
+            //daily change and relchange
+            change = value - person.previousvalue;
+            relchange = 100*(change/person.previousvalue);
+            if(change<0){
+                table.rows[row].cells[2].style.color = 'red'
+                table.rows[row].cells[3].style.color = 'red'
             } else {
-                table.rows[row].cells[4].innerHTML = profit;
-                table.rows[row].cells[4].style.color = 'red';
+                table.rows[row].cells[2].style.color = '#009879';
+                table.rows[row].cells[3].style.color = '#009879';
             }
-            if (rendement>0){
-                table.rows[row].cells[5].innerHTML = rendement;
-                table.rows[row].cells[5].style.color = '#04AA6D';
+            table.rows[row].cells[2].innerHTML = round(change,2);
+            table.rows[row].cells[3].innerHTML = round(relchange,2);
+            //profit and rendement
+            cost = person.shares*person.gak
+            profit = value-cost
+            rendement = 100*profit/cost
+            if(profit<0){
+                table.rows[row].cells[4].style.color = 'red'
+                table.rows[row].cells[5].style.color = 'red'
             } else {
-                table.rows[row].cells[5].innerHTML = rendement;
-                table.rows[row].cells[5].style.color = 'red';
+                table.rows[row].cells[4].style.color = '#009879';
+                table.rows[row].cells[5].style.color = '#009879';
             }
+            table.rows[row].cells[4].innerHTML = round(profit,2)
+            table.rows[row].cells[5].innerHTML = round(rendement,2)
+            //number of shares
             table.rows[row].cells[6].innerHTML = person.shares;
+            //gak
             table.rows[row].cells[7].innerHTML = person.gak;
-            table.rows[row].cells[8].innerHTML = cost;
+            //cost
+            table.rows[row].cells[8].innerHTML = round(cost,2);
         });
     }
+    
+});
+//
+
+//table_data
+table_list = []
+socket.on('table_data_response', function(data){
+    table_list = []
+    data.forEach( (person) => {
+        pack = {
+            "name":person.name,
+            "shares": person.shares,
+            "gak": person.gak,
+            "previousvalue": person.previousvalue
+        }
+        table_list.push(pack)
+    });
+    //console.log(table_list)
 });
 //
 
 // intervals
 setInterval(function() {
     socket.emit('ticker_price','True')
-    socket.emit('table_data','True')
-}, 2000); 
+}, 5000); 
 //
