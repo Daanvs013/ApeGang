@@ -7,6 +7,7 @@ from requests.api import get
 from yahoo_fin import stock_info as si
 import logging
 from os import path
+import os
 ## flask packages
 from flask import Flask, render_template, url_for, request
 from flask_apscheduler import APScheduler
@@ -24,7 +25,7 @@ log.disabled = True
 scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
-app.config['SECRET_KEY'] = 'key'
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY'])
 socketio = SocketIO(app,async_mode='threading')
 
 clients = []
