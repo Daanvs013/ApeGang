@@ -11,7 +11,6 @@ from os import path
 from flask import Flask, render_template, url_for, request
 from flask_apscheduler import APScheduler
 from flask_socketio import SocketIO, emit,send
-from flask_sqlalchemy import SQLAlchemy
 ## mongoDB
 import pymongo
 from mongo import *
