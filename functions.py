@@ -1,6 +1,7 @@
 from yahoo_fin import stock_info as si
 import pandas as pd
 from datetime import date,datetime
+import os
 ## email packages
 import smtplib
 from email.message import EmailMessage
