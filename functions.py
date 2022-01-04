@@ -95,8 +95,8 @@ def insertDay():
             })
 
 def sendEmail(investor_list,gamestop):
-    LOGIN_EMAIL = os.environ['EMAIL_USERNAME'])
-    LOGIN_PASSWORD = os.environ['EMAIL_PASSWORD'])
+    LOGIN_EMAIL = os.environ(['EMAIL_USERNAME'])
+    LOGIN_PASSWORD = os.environ(['EMAIL_PASSWORD'])
 
     for investor in investor_list:
         file = str(investor.name)+".csv"
