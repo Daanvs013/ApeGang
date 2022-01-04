@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from datetime import datetime
 import os
 ## clusters
-mongodb = os.environ(['MONGODB'])
+mongodb = os.environ['MONGODB']
 cluster = MongoClient(mongodb)
 ## databases
 db_gamestop = cluster['GameStop']
