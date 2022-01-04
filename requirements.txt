@@ -5,4 +5,4 @@ yahoo_fin== 0.8.9.1
 flask_socketio== 5.1.1
 pandas== 1.3.3
 flask_apscheduler==1.12.3
-pymongo==4.0.1
+pymongo[srv]"==4.0.1
