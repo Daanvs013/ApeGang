@@ -95,12 +95,8 @@ def insertDay():
             })
 
 def sendEmail(investor_list,gamestop):
-    ## get login details
-    with open('login.txt','r') as f:
-        lines = f.readlines()
-        f.close()
-    LOGIN_EMAIL = lines[0]
-    LOGIN_PASSWORD = lines[1]
+    LOGIN_EMAIL = os.environ['EMAIL_USERNAME'])
+    LOGIN_PASSWORD = os.environ['EMAIL_PASSWORD'])
 
     for investor in investor_list:
         file = str(investor.name)+".csv"
