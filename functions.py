@@ -1,9 +1,12 @@
 from yahoo_fin import stock_info as si
 import pandas as pd
-from datetime import date
+from datetime import date,datetime
 ## email packages
 import smtplib
 from email.message import EmailMessage
+
+## mongoDB
+from mongo import *
 
 def getLivePrice():
     status = si.get_market_status()
@@ -23,104 +26,74 @@ def getClosingPrice():
     return price
 
 def getPreviousPrice():
-    data = pd.read_csv("CSV/Price.csv")
-    df = pd.DataFrame(data)
-    previousprice = df.loc[0][1]
+    post = collection_price.find().sort('dag',-1)
+    previousprice = post[0]["sluitkoers"]
     return float(previousprice)
 
-def init(investor, investor_list):
-    ## read data file
-    with open('CSV/data.csv', 'r') as f:
-        lines = f.readlines()
-        f.close()
+def updateStats():
+    for member in collection_members.find({}):
+        name = member["naam"]
+        for holding in member["holdings"]:
+            ##print(name+"+"+holding)
+            db = cluster[name]
+            collection = db[holding].find().sort('dag',-1)
 
-    ## create investor objects
-    ## search for 'name=' syntax
-    for line in lines:
-        if line.startswith("name="):
-            text = line.split(sep=",")
-            email = text[2][7:-2]
-            name = investor(str(text[0][5:]),email)
-            investor_list.append(name)
-            ## check how many initial holdings that investor has
-            holdings = text[1][9:]
-            start = lines.index(line) + 1
-            end = start+int(holdings)
-            ## add all holdings to the investor object
-            for j in range(start,end):
-                text = lines[j].split(sep=",")
-                name.addHolding(text[0],text[1],text[2])
-        else:
-            pass
+            day = datetime.today()
+            value = float(collection[0]["aantal"] * getClosingPrice())
+            previousvalue = float(collection[1]["waarde"])
+            change = float(value - previousvalue)
+            relchange = 0
+            if previousvalue != 0:
+                relchange = round(100*change/previousvalue,2)
+            cost = float(collection[0]["aantal"] * collection[0]["gak"])
+            profit = round(value-cost,2)
+            rendement = 0
+            if cost !=0:
+                rendement = round(100*profit/cost,2)
+            ## update 
+            db[holding].update_one({"dag":{"$gte":datetime(day.year,day.month,day.day)}},{"$set": {
+                "waarde":round(value,2),
+                "verandering":round(change,2),
+                "%verandering":relchange,
+                "winst": profit,
+                "rendement": rendement
+            }})
 
-def updateStats(investor_list,apegang):
-    for investor in investor_list:
-        name = str(investor.name)+".csv"
-        ## open dataframe
-        data = pd.read_csv("CSV/"+name)
-        df = pd.DataFrame(data)
-        ## columns
-        currentdate = date.today().strftime("%d/%m/%Y")
-        value = investor.totalValue('close')
-        previous_value = df.loc[0][1]
-        change = round(value - previous_value,2)
-        relchange = round(100*change/previous_value,2)
-        profit = investor.totalProfit('close')
-        rendement = investor.totalRendement('close')
-        shares = investor.totalShares()
-        gak = investor.gak()
-        cost = investor.totalCost()
-        ## add row to dataframe
-        row = pd.Series([currentdate,value,change,relchange,profit,rendement,shares,gak,cost], index=df.columns)
-        df.loc[-1] = row
-        df.index = df.index + 1
-        df = df.sort_index()
-        ## save new dataframe to file
-        ##print(df)
-        df.to_csv("CSV/"+name, index=False)
-
-    ## update Totaal
-    ## open dataframe
-    data = pd.read_csv("CSV/Totaal.csv")
-    df = pd.DataFrame(data)
-    ## columns
-    currentdate = date.today().strftime("%d/%m/%Y")
-    value = apegang.totalValue('close')
-    previous_value = df.loc[0][1]
-    change = round(value - previous_value,2)
-    relchange = round(100*change/previous_value,2)
-    profit = apegang.totalProfit('close')
-    rendement = apegang.totalRendement('close')
-    shares = apegang.totalShares()
-    gak = apegang.gak()
-    cost = apegang.totalCost()
-    ## add row to dataframe
-    row = pd.Series([currentdate,round(value,2),change,relchange,profit,rendement,shares,gak,cost], index=df.columns)
-    df.loc[-1] = row
-    df.index = df.index + 1
-    df = df.sort_index()
-    ## save new dataframe to file
-    ##print(df)
-    df.to_csv("CSV/Totaal.csv", index=False)
-
-    ## update Price.csv
-    ## open dataframe
-    data = pd.read_csv("CSV/Price.csv")
-    df = pd.DataFrame(data)
-    ## columns
-    currentdate = date.today().strftime("%d/%m/%Y")
+    collection = collection_price.find().sort('dag',-1)
+    previousprice = collection[0]['sluitkoers']
     price = getClosingPrice()
-    previous = df.loc[0][1]
-    change = round(price - previous,2)
-    relchange = round(100*(change/previous),2)
-    volume = 'volume'
-    row = pd.Series([currentdate,price,change,relchange,volume], index=df.columns)
-    df.loc[-1] = row
-    df.index = df.index + 1
-    df = df.sort_index()
-    ## save new dataframe to file
-    df.to_csv("CSV/Price.csv", index=False)
- 
+    change = float(price - previousprice)
+    relchange = round(100*change/previousprice,2)
+    volume = 5
+    collection_price.insert_one({
+        "dag":day,
+        "sluitkoers": round(price,2),
+        "verandering": round(change,2),
+        "%verandering": relchange,
+        "volume": volume
+    })
+
+def insertDay():
+    for member in collection_members.find({}):
+        name = member["naam"]
+        for holding in member["holdings"]:
+            ##print(name+"+"+holding)
+            db = cluster[name]
+            collection = db[holding].find().sort('dag',-1)
+
+            day = datetime.today()
+            ## insert new
+            db[holding].insert_one({
+                "dag":day,
+                "waarde":0,
+                "verandering":0,
+                "%verandering":0,
+                "winst":0,
+                "rendement":0,
+                "aantal":collection[0]["aantal"],
+                "gak":collection[0]["gak"]
+            })
+
 def sendEmail(investor_list,gamestop):
     ## get login details
     with open('login.txt','r') as f:
