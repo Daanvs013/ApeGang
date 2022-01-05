@@ -60,6 +60,30 @@ def updateStats():
                 "rendement": rendement
             }})
 
+    ## total
+    collection = collection_totaal.find().sort('dag',-1)
+    day = datetime.today()
+    value = float(collection[0]["aantal"] * getClosingPrice())
+    previousvalue = float(collection[1]["waarde"])
+    change = float(value - previousvalue)
+    relchange = 0
+    if previousvalue != 0:
+        relchange = round(100*change/previousvalue,2)
+    cost = float(collection[0]["aantal"] * collection[0]["gak"])
+    profit = round(value-cost,2)
+    rendement = 0
+    if cost !=0:
+        rendement = round(100*profit/cost,2)
+    ## update 
+    collection_totaal.update_one({"dag":{"$gte":datetime(day.year,day.month,day.day)}},{"$set": {
+        "waarde":round(value,2),
+        "verandering":round(change,2),
+        "%verandering":relchange,
+        "winst": profit,
+        "rendement": rendement
+    }})
+
+    ## koers
     collection = collection_price.find().sort('dag',-1)
     previousprice = collection[0]['sluitkoers']
     price = getClosingPrice()
@@ -94,10 +118,29 @@ def insertDay():
                 "aantal":collection[0]["aantal"],
                 "gak":collection[0]["gak"]
             })
+    ## total
+    collection = collection_totaal.find().sort('dag',-1)
+
+    day = datetime.today()
+    ## insert new
+    collection_totaal.insert_one({
+        "dag":day,
+        "waarde":0,
+        "verandering":0,
+        "%verandering":0,
+        "winst":0,
+        "rendement":0,
+        "aantal":collection[0]["aantal"],
+        "gak":collection[0]["gak"]
+    })
 
 def sendEmail(investor_list,gamestop):
-    LOGIN_EMAIL = os.environ(['EMAIL_USERNAME'])
-    LOGIN_PASSWORD = os.environ(['EMAIL_PASSWORD'])
+    ## get login details
+    with open('login.txt','r') as f:
+        lines = f.readlines()
+        f.close()
+    LOGIN_EMAIL = lines[0]
+    LOGIN_PASSWORD = lines[1]
 
     for investor in investor_list:
         file = str(investor.name)+".csv"

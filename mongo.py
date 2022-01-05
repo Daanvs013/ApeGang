@@ -2,8 +2,7 @@ from pymongo import MongoClient
 from datetime import datetime
 import os
 ## clusters
-mongodb = os.environ['MONGODB']
-cluster = MongoClient(mongodb)
+cluster = MongoClient("mongodb+srv://ArchdukeDaan:T384h5311m2001@apegang.mrems.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 ## databases
 db_gamestop = cluster['GameStop']
 db_bram = cluster['Bram']
