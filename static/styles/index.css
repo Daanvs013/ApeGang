@@ -1,41 +1,11 @@
-#header {
-    position: absolute;
-    width: 50%;
-    height: 5%;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-}
-
 #sid {
     position: absolute;
     font-size: 0.6em;
     color: black;
     font-family: sans-serif;
-    bottom: 1%;
     left: 1%;
+    bottom: 1%;
 }
-
-.linker {
-    position: relative;
-    font-size: 1.1em;
-    padding: 15px;
-    background-color: #009879;
-    color: #ffffff;
-    text-align: center;
-    font-weight: bold;
-    border-radius: 0 0 5px 5px;
-    border: 1px solid #009879;
-}
-
-.linker:hover {
-    background-color: #ffffff;
-    color: #009879;
-}
-
-a:link { text-decoration: none; }
-
-a:visited { text-decoration: none; }
 
 #ticker_container {
     position: absolute;
@@ -58,6 +28,19 @@ a:visited { text-decoration: none; }
 }
 
 #table {
+    left: 50%;
+    transform: translate(-50%,-50%);
+    position: absolute;
+    width: 60%;
+    height: 40%;
+    top: 50%;
+    font-size: 1.2em;
+    border-collapse: collapse;
+    font-family: sans-serif;
+    margin: 25px 0;
+}
+
+#table_history {
     left: 50%;
     transform: translate(-50%,-50%);
     position: absolute;
@@ -93,4 +76,16 @@ th {
     color: #ffffff;
     text-align: center;
     font-weight: bold;
+}
+
+#add_table_content {
+    padding: 10px;
+    background-color: #009879;
+    color: #ffffff;
+    font-size: 1em;
+    cursor: pointer;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20%;
 }
