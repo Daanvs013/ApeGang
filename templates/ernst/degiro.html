@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>ApeGang | Ernst Degiro</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/nav.css' )}}"/>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/index.css' )}}"/>
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico' )}}">
+    </head>
+
+    <body>
+        <nav>
+            <p>ApeGang</p>
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li><a href="/bram">Bram</a>
+                    <ul>
+                        <li><a href="/bram/degiro">Degiro</a>
+                        <li><a href="/bram/ibkr">IBKR</a>
+                        <li><a href="/bram/computershare">ComputerShare</a>
+                        <li><a href="/bram/totaal">Totaal</a>   
+                    </ul>
+                </li>
+                <li><a href="/daan">Daan</a>
+                    <ul>
+                        <li><a href="/daan/degiro">Degiro</a>
+                        <li><a href="/daan/rabobank">Rabobank</a>
+                        <li><a href="/daan/ibkr">IBKR</a>
+                        <li><a href="/daan/computershare">ComputerShare</a>
+                        <li><a href="/daan/totaal">Totaal</a>   
+                    </ul>
+                </li>
+                <li><a href="/ernst">Ernst</a>
+                    <ul>
+                        <li><a href="/ernst/degiro">Degiro</a>
+                        <li><a href="/ernst/totaal">Totaal</a>   
+                    </ul>
+                </li>
+                <li><a href="/harm">Harm</a>
+                    <ul>
+                        <li><a href="/harm/degiro">Degiro</a>
+                        <li><a href="/harm/totaal">Totaal</a>   
+                    </ul>
+                </li>
+                <li><a href="/wenting">Wen Ting</a>
+                    <ul>
+                        <li><a href="/wenting/degiro">Degiro</a>
+                        <li><a href="/wenting/totaal">Totaal</a>   
+                    </ul>
+                </li>
+                <li><a href="/totaal">Totaal</a></li>
+              </ul>
+              <ul id="edit">
+                <li ><a href="/edit">Edit</a></li>
+              </ul>
+        </nav>
+
+        <!--<div id="add_table_content">Laad 5 meer dagen</div>-->
+        <table id="table_history">
+            <tr>
+                <th>Dag</th>
+                <th>Waarde</th>
+                <th>Verandering</th>
+                <th>%Verandering</th>
+                <th>Winst</th>
+                <th>Rendement</th>
+                <th>Aantal</th>
+                <th>GAK</th>
+                <th>Kosten</th>
+              </tr>
+        </table>
+
+        <div id="sid">SID:</div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdn.socket.io/4.4.0/socket.io.min.js" integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='javascript/socket.js')}}"></script>
+        <script src="{{ url_for('static', filename='javascript/ernst/degiro.js')}}"></script>
+        <script src="{{ url_for('static', filename='javascript/history_table.js')}}"></script>
+    </body>
+</html>
