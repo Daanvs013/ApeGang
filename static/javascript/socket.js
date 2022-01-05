@@ -4,6 +4,7 @@ var socket = io.connect()
 socket.on('client_connect_response', function(data){
     console.log(`SID: ${data}`)
     document.getElementById('sid').innerHTML = `SID: ${data}`;
+    sessionStorage.setItem("sid",data);
 });
 //
 
@@ -14,8 +15,8 @@ function round(number, d) {
 //
 
 //backdoor
-function backdoor(password,input){
-  socket.emit("console",[password,input])
+function backdoor(input){
+  socket.emit("console",input)
 }
 socket.on("console_response", function(data){
   console.log(data)
